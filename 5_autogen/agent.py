@@ -2,6 +2,7 @@ from autogen_core import MessageContext, RoutedAgent, message_handler
 from autogen_agentchat.agents import AssistantAgent
 from autogen_agentchat.messages import TextMessage
 from autogen_ext.models.openai import OpenAIChatCompletionClient
+import os
 import messages
 import random
 from dotenv import load_dotenv
@@ -28,7 +29,12 @@ class Agent(RoutedAgent):
 
     def __init__(self, name) -> None:
         super().__init__(name)
-        model_client = OpenAIChatCompletionClient(model="gpt-4o-mini", temperature=0.7)
+        model_client = OpenAIChatCompletionClient(
+            model="meta-llama/llama-3.3-70b-instruct",
+            temperature=0.7,
+            api_key=os.getenv('OPENROUTER_API_KEY'),
+            base_url="https://openrouter.ai/api/v1"
+        )
         self._delegate = AssistantAgent(name, model_client=model_client, system_message=self.system_message)
 
     @message_handler
